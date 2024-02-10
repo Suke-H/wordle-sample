@@ -1,35 +1,47 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useState } from 'react';
 
-function App() {
-  const [count, setCount] = useState(0)
+import { Answer } from './components/answer';
+import { Keyboard } from './components/keyboard';
 
-  return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+export const App = (): JSX.Element =>{
+    // 6*5の配列の初期化
+    const initAnswerList: string[][] = new Array(6);
+    for (let i=0; i<6; i++){
+        initAnswerList[i] = new Array(5).fill("");
+    }
+
+    // 回答一覧
+    // キーボードの文字入力により更新
+    const [ answerList, setAnswerList ] = useState<string[][]>(initAnswerList);
+
+    // 回答の判定を行うフラグ
+    // キーボードのEnter入力により更新
+    const [ judge, setJudge ] = useState<boolean>(false);
+
+    // 現在の状態
+    // playing: ゲーム中
+    // success: 成功
+    // fail: 失敗
+    const [ gameStatus, setGameStatus ] = useState<string>("playing");
+
+    // 正解単語
+    const [ answerWord ] = useState<string>("MARIO");
+
+    return (
+        <div className="App">
+
+            <Answer 
+                answerList={answerList}
+                judge={judge}
+                setJudge={setJudge}
+                answerWord={answerWord}
+                gameStatus={gameStatus}
+                setGameStatus={setGameStatus}
+            />
+            <Keyboard 
+                setAnswerList={setAnswerList}
+                setJudge={setJudge}
+            />
+        </div>
+    );
 }
-
-export default App
