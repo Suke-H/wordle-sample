@@ -2,6 +2,7 @@ import { useState } from 'react';
 
 import { Answer } from './components/answer';
 import { Keyboard } from './components/keyboard';
+import { Notes } from './components/notes';
 
 export const App = (): JSX.Element =>{
     // 6*5の配列の初期化
@@ -25,7 +26,7 @@ export const App = (): JSX.Element =>{
     const [ gameStatus, setGameStatus ] = useState<string>("playing");
 
     // 正解単語
-    const [ answerWord ] = useState<string>("MARIO");
+    const [ answerWord ] = useState<string>("SUPER");
 
     return (
         <div className="App">
@@ -42,6 +43,8 @@ export const App = (): JSX.Element =>{
                 setAnswerList={setAnswerList}
                 setJudge={setJudge}
             />
+            <Notes/>
+
         </div>
     );
 }
