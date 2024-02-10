@@ -1,0 +1,47 @@
+name: Build
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '16.x'
+
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v3
+      with:
+        role-to-assume: ${{ secrets.ROLE_ARN }}
+        aws-region: ${{ secrets.REGION }}
+
+    - name: Install dependencies
+      run: npm install
+
+    - name: Build
+      run: npm run build
+
+    - name: Deploy
+      run: aws s3 sync dist/ s3://${BUCKET_NAME}/game_pages --exact-timestamps --region ${REGION}
+      env: 
+        BUCKET_NAME: ${{ secrets.BUCKET_NAME }}
+        REGION: ${{ secrets.REGION }}
+
+    - name: Clear cache
+      run: |
+        aws cloudfront create-invalidation --distribution-id ${DISTRIBUTION_ID} --paths "/*"
+      env:
+        DISTRIBUTION_ID: ${{ secrets.DISTRIBUTION_ID }}
