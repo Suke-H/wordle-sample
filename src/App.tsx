@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import axios from "axios";
 
 import { Answer } from "./components/answer";
 import { Keyboard } from "./components/keyboard";
@@ -26,7 +27,21 @@ export const App = (): JSX.Element => {
   const [gameStatus, setGameStatus] = useState<string>("playing");
 
   // 正解単語
-  const [answerWord] = useState<string>("SUPER");
+  const [correctAnswer, setCorrectAnswer] = useState<string>("");
+
+  const getCorrectAnswer = async () => {
+    const { data } = await axios.post('https://sample-api', {});
+    if (data.correct_answer === undefined) {
+      return;
+    }
+    setCorrectAnswer(data.correct_answer);
+  };
+
+  // 初回レンダリング時にのみ実行
+  useEffect(() => {
+      getCorrectAnswer();
+  }, []);
+
 
   return (
     <div className="App" style={appStyle}>
@@ -34,7 +49,7 @@ export const App = (): JSX.Element => {
         answerList={answerList}
         judge={judge}
         setJudge={setJudge}
-        answerWord={answerWord}
+        correctAnswer={correctAnswer}
         gameStatus={gameStatus}
         setGameStatus={setGameStatus}
       />

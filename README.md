@@ -2,6 +2,8 @@
 
 勉強としてWORDLEを作成
 
+<img width="35%" alt="PC表示" src="./docs/screenshot.png">
+
 # 使用技術
 - AWS
   - S3
