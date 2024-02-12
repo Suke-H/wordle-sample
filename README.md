@@ -1,6 +1,7 @@
 # wordle-sample
 
 勉強としてWORDLEを作成
+https://kakutory.com/game_pages/
 
 <img width="35%" alt="PC表示" src="./docs/screenshot.png">
 

@@ -30,7 +30,7 @@ export const App = (): JSX.Element => {
   const [correctAnswer, setCorrectAnswer] = useState<string>("");
 
   const getCorrectAnswer = async () => {
-    const { data } = await axios.post('https://sample-api', {});
+    const { data } = await axios.post('https://6v28y0cobc.execute-api.ap-southeast-2.amazonaws.com/WORDLE', {});
     if (data.correct_answer === undefined) {
       return;
     }
