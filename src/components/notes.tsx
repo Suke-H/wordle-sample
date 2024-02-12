@@ -29,6 +29,7 @@ export const Notes = () => {
         <ul>       
             <li>New York Times社の<a href="https://www.nytimes.com/games/wordle/index.html">WORDLE</a>
             をもとに作成した勉強用サイトです</li>
+            <li>GitHubリポジトリは<a href="https://github.com/Suke-H/wordle-sample/">こちら</a></li>
         </ul> 
 
       <Button
