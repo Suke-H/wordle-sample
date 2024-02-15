@@ -29,17 +29,17 @@ export const App = (): JSX.Element => {
   // 正解単語
   const [correctAnswer, setCorrectAnswer] = useState<string>("");
 
-  const getCorrectAnswer = async () => {
-    const { data } = await axios.post('https://6v28y0cobc.execute-api.ap-southeast-2.amazonaws.com/WORDLE', {});
-    if (data.correct_answer === undefined) {
+  const getTodaysWord = async () => {
+    const { data } = await axios.post('https://es5eaffo90.execute-api.ap-southeast-2.amazonaws.com/WORDLE', {});
+    if (data.todays_word === undefined) {
       return;
     }
-    setCorrectAnswer(data.correct_answer);
+    setCorrectAnswer(data.todays_word);
   };
 
   // 初回レンダリング時にのみ実行
   useEffect(() => {
-      getCorrectAnswer();
+      getTodaysWord();
   }, []);
 
 
