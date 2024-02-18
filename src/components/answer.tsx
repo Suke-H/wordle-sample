@@ -143,7 +143,7 @@ export const Answer = (props: Props) => {
       alert("clear!!");
       return "success";
     } else if (round == 6) {
-      alert("fail...");
+      alert(props.correctAnswer);
       return "fail";
     }
 
