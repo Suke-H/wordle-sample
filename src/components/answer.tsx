@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import axios from "axios";
 
 type Props = {
   answerList: string[][];
@@ -83,6 +84,18 @@ export const Answer = (props: Props) => {
   const [matchStyleList, setMatchStyleList] =
     useState<React.CSSProperties[][]>(initMatchStyleList);
 
+  // 単語の妥当性判定
+  const wordValidityJudgement = async () => {
+    const { data } = await axios.post('https://yan5p8s0dg.execute-api.ap-southeast-2.amazonaws.com/WORDLE', 
+      {"word": props.answerList[round - 1].join("")},);
+    console.log(data);
+    if (data.isValid === undefined) {
+      return false;
+    }
+
+    return data.isValid;
+  }
+
   // 単語一致判定
   const wordMatchJudgement = () => {
     // 一度ディープコピーする
@@ -139,34 +152,48 @@ export const Answer = (props: Props) => {
 
   // Appコンポーネントのjudgeが変化した時に呼ばれる
   useEffect(() => {
-    // Enterを押したら
-    if (props.judge === true) {
-      // 一度フラグをおろす
-      props.setJudge(false);
-    }
 
-    // フラグをおろしてからここへ
-    else {
-      // コンポーネント初期化時にここを通る
-      if (round == 0) {
-        setRound(round + 1); // ラウンドを1に
-        return;
+    const checkProcess = async () => {
+
+      // Enterを押したら
+      if (props.judge === true) {
+
+        // 単語の妥当性判定
+        const isValid = await wordValidityJudgement();
+        if (!isValid)
+        {
+          alert("データセットに存在しない単語です");
+          return;
+        }
+
+        // 一度フラグをおろす
+        props.setJudge(false);
       }
 
-      // ゲーム継続中なら
-      if (props.gameStatus == "playing") {
-        // 単語一致判定
-        const tmpMatchStyleList = wordMatchJudgement();
+      // フラグをおろしてからここへ
+      else {
+        // コンポーネント初期化時にここを通る
+        if (round == 0) {
+          setRound(round + 1); // ラウンドを1に
+          return;
+        }
 
-        // クリア判定
-        clearJudgement();
-
-        // スタイル更新
-        setMatchStyleList(tmpMatchStyleList);
-        // ラウンド更新
-        setRound(round + 1);
+        // ゲーム継続中なら
+        if (props.gameStatus == "playing") {
+          // 単語一致判定
+          const tmpMatchStyleList = wordMatchJudgement();
+          // クリア判定
+          clearJudgement();
+          // スタイル更新
+          setMatchStyleList(tmpMatchStyleList);
+          // ラウンド更新
+          setRound(round + 1);
+        }
       }
     }
+
+    checkProcess();
+
   }, [props.judge]);
 
   return (

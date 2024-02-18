@@ -53,7 +53,7 @@ export const App = (): JSX.Element => {
         gameStatus={gameStatus}
         setGameStatus={setGameStatus}
       />
-      <Keyboard setAnswerList={setAnswerList} setJudge={setJudge} />
+      <Keyboard answerList={answerList} setAnswerList={setAnswerList} setJudge={setJudge} />
       <Notes />
     </div>
   );
