@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
+import axios from "axios";
 
 type appProps = {
+  answerList: string[][];
   setAnswerList: React.Dispatch<React.SetStateAction<string[][]>>;
   setJudge: React.Dispatch<React.SetStateAction<boolean>>;
 };
@@ -10,6 +12,7 @@ type Props = {
   setColumncnt: React.Dispatch<React.SetStateAction<number>>;
   columncnt: number;
   setRowcnt: React.Dispatch<React.SetStateAction<number>>;
+  answerList: string[][],
   setAnswerList: React.Dispatch<React.SetStateAction<string[][]>>;
   keyLayout: string[];
   setJudge: React.Dispatch<React.SetStateAction<boolean>>;
@@ -37,7 +40,19 @@ const KeyboardRow = (props: Props) => {
     return tmpList;
   };
 
-  const handleClick = (
+  // 単語の妥当性判定
+  const wordValidityJudgement = async () => {
+    const { data } = await axios.post('https://yan5p8s0dg.execute-api.ap-southeast-2.amazonaws.com/WORDLE', 
+      {"word": props.answerList[props.rowcnt].join("")});
+    console.log(data);
+    if (data.isValid === undefined) {
+      return false;
+    }
+
+    return data.isValid;
+  }
+
+  const handleClick = async (
     event: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ) => {
     const letter = event.currentTarget.value;
@@ -49,14 +64,27 @@ const KeyboardRow = (props: Props) => {
         alert("文字数が足りません");
       }
 
+      // 単語の妥当性判定
+      const isValid = await wordValidityJudgement();
+      if (!isValid)
+      {
+        alert("データセットに存在しない単語です");
+        props.setAnswerList(prevState =>
+          prevState.map((row, index) =>
+            index === props.rowcnt ? Array(5).fill("") : row
+          )
+        );
+
+        props.setColumncnt(0);
+
+      }
+
       // 5文字入力した状態
       else {
         // フラグ送信（正解判定の依頼）
         props.setJudge(true);
-
         // 列数リセット
         props.setColumncnt(0);
-
         // 次の行へ移行
         props.setRowcnt((prev) => prev + 1);
       }
@@ -174,6 +202,7 @@ export const Keyboard = (props: appProps) => {
         setRowcnt={setRowcnt}
         columncnt={columncnt}
         setColumncnt={setColumncnt}
+        answerList={props.answerList}
         setAnswerList={props.setAnswerList}
         keyLayout={upKeyLayout}
         setJudge={props.setJudge}
@@ -183,6 +212,7 @@ export const Keyboard = (props: appProps) => {
         setRowcnt={setRowcnt}
         columncnt={columncnt}
         setColumncnt={setColumncnt}
+        answerList={props.answerList}
         setAnswerList={props.setAnswerList}
         keyLayout={middleKeyLayout}
         setJudge={props.setJudge}
@@ -192,6 +222,7 @@ export const Keyboard = (props: appProps) => {
         setRowcnt={setRowcnt}
         columncnt={columncnt}
         setColumncnt={setColumncnt}
+        answerList={props.answerList}
         setAnswerList={props.setAnswerList}
         keyLayout={downKeyLayout}
         setJudge={props.setJudge}
