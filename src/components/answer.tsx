@@ -3,6 +3,8 @@ import axios from "axios";
 
 type Props = {
   answerList: string[][];
+  matchList: string[][];
+  setMatchList: React.Dispatch<React.SetStateAction<string[][]>>;
   judge: boolean;
   setJudge: React.Dispatch<React.SetStateAction<boolean>>;
   correctAnswer: string;
@@ -54,35 +56,15 @@ export const Answer = (props: Props) => {
   greenTdStyle["color"] = "White";
   greenTdStyle["backgroundColor"] = "538d4e";
 
+  const styleDict: { [key: string]: React.CSSProperties } = {
+    "White": whiteTdStyle,
+    "Black": blackTdStyle,
+    "Yellow": yellowTdStyle,
+    "Green": greenTdStyle,
+  };
+
   // ラウンド
   const [round, setRound] = useState<number>(0);
-
-  // リストの初期化
-  const initMatchList: string[][] = new Array(6);
-  for (let i = 0; i < 6; i++) {
-    initMatchList[i] = new Array(5).fill("White");
-  }
-
-  // 回答欄のCSSリスト
-  // White: 判定していない
-  // Black: 文字も位置も無一致
-  // Yellow: 文字のみ一致
-  // Green: 文字も位置も一致
-  // const [ matchList, setMatchList ] = useState<string[][]>(initMatchList);
-
-  // リストの初期化
-  const initMatchStyleList: React.CSSProperties[][] = new Array(6);
-  for (let i = 0; i < 6; i++) {
-    initMatchStyleList[i] = new Array(5).fill(whiteTdStyle);
-  }
-
-  // 回答欄のCSSリスト
-  // White: 判定していない
-  // Black: 文字も位置も無一致
-  // Yellow: 文字のみ一致
-  // Green: 文字も位置も一致
-  const [matchStyleList, setMatchStyleList] =
-    useState<React.CSSProperties[][]>(initMatchStyleList);
 
   // 単語の妥当性判定
   const wordValidityJudgement = async () => {
@@ -97,9 +79,9 @@ export const Answer = (props: Props) => {
   }
 
   // 単語一致判定
-  const wordMatchJudgement = () => {
+  const wordMatchJudgement = (): string[][] => {
     // 一度ディープコピーする
-    const tmpMatchStyleList = Array.from(matchStyleList);
+    const tmpMatchList = Array.from(props.matchList);
 
     // 1文字ずつ判定
     for (let i = 0; i < 5; i++) {
@@ -107,21 +89,21 @@ export const Answer = (props: Props) => {
       if (props.correctAnswer.indexOf(props.answerList[round - 1][i]) !== -1) {
         // 位置も一致(Green)
         if (props.answerList[round - 1][i] === props.correctAnswer[i]) {
-          tmpMatchStyleList[round - 1][i] = greenTdStyle;
+          tmpMatchList[round - 1][i] = "Green";
         }
 
         // 文字だけ一致(Yellow)
         else {
-          tmpMatchStyleList[round - 1][i] = yellowTdStyle;
+          tmpMatchList[round - 1][i] = "Yellow";
         }
       }
 
       // 文字も位置も一致していない(Black)
       else {
-        tmpMatchStyleList[round - 1][i] = blackTdStyle;
+        tmpMatchList[round - 1][i] = "Black";
       }
     }
-    return tmpMatchStyleList;
+    return tmpMatchList;
   };
 
   // クリア判定
@@ -181,11 +163,13 @@ export const Answer = (props: Props) => {
         // ゲーム継続中なら
         if (props.gameStatus == "playing") {
           // 単語一致判定
-          const tmpMatchStyleList = wordMatchJudgement();
+          // const tmpMatchStyleList = wordMatchJudgement();
+          const tmpMatchList = wordMatchJudgement();
           // クリア判定
           clearJudgement();
           // スタイル更新
-          setMatchStyleList(tmpMatchStyleList);
+          // setMatchStyleList(tmpMatchStyleList);
+          props.setMatchList(tmpMatchList);
           // ラウンド更新
           setRound(round + 1);
         }
@@ -204,7 +188,7 @@ export const Answer = (props: Props) => {
           {props.answerList.map((answer, i) => (
             <tr key={i}>
               {answer.map((letter, j) => (
-                <td key={j} style={matchStyleList[i][j]}>
+                <td key={j} style={styleDict[props.matchList[i][j]]}>
                   {letter}
                 </td>
               ))}
