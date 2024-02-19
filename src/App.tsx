@@ -28,6 +28,7 @@ export const App = (): JSX.Element => {
 
   // 正解単語
   const [correctAnswer, setCorrectAnswer] = useState<string>("");
+  // const [todays_no, setTodaysNo] = useState<number>(0);
 
   const getTodaysWord = async () => {
     const { data } = await axios.post('https://es5eaffo90.execute-api.ap-southeast-2.amazonaws.com/WORDLE', {});
@@ -35,6 +36,8 @@ export const App = (): JSX.Element => {
       return;
     }
     setCorrectAnswer(data.todays_word);
+    // setTodaysNo(data.todays_no);
+    console.log(data);
   };
 
   // 初回レンダリング時にのみ実行
