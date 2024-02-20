@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 
-import { Answer } from "./components/Answer";
-import { Keyboard } from "./components/Keyboard";
-import { Notes } from "./components/Notes";
+import { Answer } from "./components/answer";
+import { Keyboard } from "./components/keyboard";
+import { Notes } from "./components/notes";
 import { ShareResultButton } from "./components/ShareResultButton";
 
 import { pushedEnterProcess } from "./game_logics/pushedEnterProcess";
