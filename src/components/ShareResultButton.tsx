@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import Button from "@mui/material/Button";
 import Snackbar from '@mui/material/Snackbar';
 import type { SnackbarCloseReason } from '@mui/material/Snackbar';
@@ -21,8 +21,21 @@ const shareStyle: React.CSSProperties = {
     fontFamily:  ["Inter", "system-ui", "Avenir", "Helvetica", "Arial", "sans-serif"].join(','),
 };
 
+
+
 export const ShareResultButton = (props: Props): JSX.Element => {
     const [openSnackbar, setOpenSnackbar] = useState(false);
+    const buttonRef = useRef<HTMLButtonElement>(null);
+
+    // スナックバーのスタイルを動的に計算
+    const snackbarStyle = buttonRef.current
+    ? {
+        position: 'absolute',
+        top: `${buttonRef.current.offsetTop - 60}px`, // ボタンの上に配置
+        left: '50%', // ビューポートの中央
+        transform: 'translate(-50%, 0)', // 要素の幅の半分だけ左にずらす
+    }
+    : {};
     
     const handleCopyText = () => {
         const textToCopy = props.resultText; // コピーしたいテキスト
@@ -44,6 +57,7 @@ export const ShareResultButton = (props: Props): JSX.Element => {
     return (
         <div style={shareStyle}>
             <Button
+                ref={buttonRef}
                 variant="contained"
                 onClick={handleCopyText}
                 sx={{
@@ -61,6 +75,7 @@ export const ShareResultButton = (props: Props): JSX.Element => {
             </Button>
 
         <Snackbar
+            style={snackbarStyle}
             open={openSnackbar}
             autoHideDuration={2000} 
             onClose={handleCloseSnackbar}
