@@ -1,17 +1,21 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+// import axios from "axios";
 
 type appProps = {
+  round: number;
+  setRound: React.Dispatch<React.SetStateAction<number>>;
+  columncnt: number;
+  setColumncnt: React.Dispatch<React.SetStateAction<number>>;
   answerList: string[][];
   setAnswerList: React.Dispatch<React.SetStateAction<string[][]>>;
   setJudge: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 type Props = {
-  rowcnt: number;
-  setColumncnt: React.Dispatch<React.SetStateAction<number>>;
+  round: number;
+  setRound: React.Dispatch<React.SetStateAction<number>>;
   columncnt: number;
-  setRowcnt: React.Dispatch<React.SetStateAction<number>>;
+  setColumncnt: React.Dispatch<React.SetStateAction<number>>;
   answerList: string[][],
   setAnswerList: React.Dispatch<React.SetStateAction<string[][]>>;
   keyLayout: string[];
@@ -40,17 +44,18 @@ const KeyboardRow = (props: Props) => {
     return tmpList;
   };
 
-  // 単語の妥当性判定
-  const wordValidityJudgement = async () => {
-    const { data } = await axios.post('https://yan5p8s0dg.execute-api.ap-southeast-2.amazonaws.com/WORDLE', 
-      {"word": props.answerList[props.rowcnt].join("")});
-    console.log(data);
-    if (data.isValid === undefined) {
-      return false;
-    }
+  // // 単語の妥当性判定
+  // const wordValidityJudgement = async () => {
+  //   const { data } = await axios.post('https://yan5p8s0dg.execute-api.ap-southeast-2.amazonaws.com/WORDLE', 
+  //     {"word": props.answerList[props.rowcnt].join("")});
+  //   console.log(data);
+  //   if (data.isValid === undefined) {
+  //     return false;
+  //   }
 
-    return data.isValid;
-  }
+  //   return data.isValid;
+  // }
+  
 
   const handleClick = async (
     event: React.MouseEvent<HTMLButtonElement, MouseEvent>
@@ -64,29 +69,29 @@ const KeyboardRow = (props: Props) => {
         alert("文字数が足りません");
       }
 
-      // 単語の妥当性判定
-      const isValid = await wordValidityJudgement();
-      if (!isValid)
-      {
-        alert("データセットに存在しない単語です");
-        props.setAnswerList(prevState =>
-          prevState.map((row, index) =>
-            index === props.rowcnt ? Array(5).fill("") : row
-          )
-        );
+      // // 単語の妥当性判定
+      // const isValid = await wordValidityJudgement();
+      // if (!isValid)
+      // {
+      //   alert("データセットに存在しない単語です");
+      //   props.setAnswerList(prevState =>
+      //     prevState.map((row, index) =>
+      //       index === props.rowcnt ? Array(5).fill("") : row
+      //     )
+      //   );
 
-        props.setColumncnt(0);
+      //   props.setColumncnt(0);
 
-      }
+      // }
 
       // 5文字入力した状態
       else {
         // フラグ送信（正解判定の依頼）
         props.setJudge(true);
         // 列数リセット
-        props.setColumncnt(0);
+        // props.setColumncnt(0);
         // 次の行へ移行
-        props.setRowcnt((prev) => prev + 1);
+        // props.setRound((prev) => prev + 1);
       }
     }
 
@@ -95,7 +100,7 @@ const KeyboardRow = (props: Props) => {
       // 1文字以上入力
       if (props.columncnt > 0) {
         props.setAnswerList((prevState) =>
-          updateAnswer(prevState, "", props.rowcnt, props.columncnt - 1)
+          updateAnswer(prevState, "", props.round-1, props.columncnt - 1)
         );
         props.setColumncnt((prev) => prev - 1);
       }
@@ -104,7 +109,7 @@ const KeyboardRow = (props: Props) => {
     // アルファベット入力
     else if (props.columncnt < 5) {
       props.setAnswerList((prevState) =>
-        updateAnswer(prevState, letter, props.rowcnt, props.columncnt)
+        updateAnswer(prevState, letter, props.round-1, props.columncnt)
       );
       props.setColumncnt((prev) => prev + 1);
     }
@@ -192,36 +197,36 @@ export const Keyboard = (props: appProps) => {
     "Delete",
   ];
 
-  const [rowcnt, setRowcnt] = useState(0);
-  const [columncnt, setColumncnt] = useState(0);
+  // const [rowcnt, setRowcnt] = useState(0);
+  // const [columncnt, setColumncnt] = useState(0);
 
   return (
     <div className="Keyboard">
       <KeyboardRow
-        rowcnt={rowcnt}
-        setRowcnt={setRowcnt}
-        columncnt={columncnt}
-        setColumncnt={setColumncnt}
+        round={props.round}
+        setRound={props.setRound}
+        columncnt={props.columncnt}
+        setColumncnt={props.setColumncnt}
         answerList={props.answerList}
         setAnswerList={props.setAnswerList}
         keyLayout={upKeyLayout}
         setJudge={props.setJudge}
       />
       <KeyboardRow
-        rowcnt={rowcnt}
-        setRowcnt={setRowcnt}
-        columncnt={columncnt}
-        setColumncnt={setColumncnt}
+        round={props.round}
+        setRound={props.setRound}
+        columncnt={props.columncnt}
+        setColumncnt={props.setColumncnt}
         answerList={props.answerList}
         setAnswerList={props.setAnswerList}
         keyLayout={middleKeyLayout}
         setJudge={props.setJudge}
       />
       <KeyboardRow
-        rowcnt={rowcnt}
-        setRowcnt={setRowcnt}
-        columncnt={columncnt}
-        setColumncnt={setColumncnt}
+        round={props.round}
+        setRound={props.setRound}
+        columncnt={props.columncnt}
+        setColumncnt={props.setColumncnt}
         answerList={props.answerList}
         setAnswerList={props.setAnswerList}
         keyLayout={downKeyLayout}

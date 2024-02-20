@@ -10,7 +10,7 @@ import { getTodaysWord } from "./utils/getTodaysWord";
 import { makeGameResultText } from "./utils/makeGameResultText";
 
 export const App = (): JSX.Element => {
-  
+
   // 回答欄の文字列
   const initAnswerList: string[][] = new Array(6);
   for (let i = 0; i < 6; i++) {
@@ -40,6 +40,7 @@ export const App = (): JSX.Element => {
 
   // ラウンド（=現在の行番号+1）
   const [round, setRound] = useState<number>(0);
+  const [columncnt, setColumncnt] = useState(0);
 
   // 初回レンダリング時にのみ実行
    useEffect(() => {
@@ -54,9 +55,11 @@ export const App = (): JSX.Element => {
       setJudge,
       correctAnswer,
       answerList,
+      setAnswerList,
       matchList,
       round,
       setRound,
+      setColumncnt,
       setMatchList
     );
   }, [judge]);
@@ -68,6 +71,10 @@ export const App = (): JSX.Element => {
         matchList={matchList}
       />
       <Keyboard 
+        round={round}
+        setRound={setRound}
+        columncnt={columncnt}
+        setColumncnt={setColumncnt}
         answerList={answerList} 
         setAnswerList={setAnswerList} 
         setJudge={setJudge} 
