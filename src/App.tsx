@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
 
 import { Answer } from "./components/answer";
 import { Keyboard } from "./components/keyboard";
@@ -7,29 +6,27 @@ import { Notes } from "./components/notes";
 import { ShareResultButton } from "./components/ShareResultButton";
 
 import { pushedEnterProcess } from "./game_logics/pushedEnterProcess";
+import { getTodaysWord } from "./utils/getTodaysWord";
+import { makeGameResultText } from "./utils/makeGameResultText";
 
 export const App = (): JSX.Element => {
-  // 6*5の配列の初期化
+  
+  // 回答欄の文字列
   const initAnswerList: string[][] = new Array(6);
   for (let i = 0; i < 6; i++) {
     initAnswerList[i] = new Array(5).fill("");
   }
-
-  // 回答一覧
-  // キーボードの文字入力により更新
   const [answerList, setAnswerList] = useState<string[][]>(initAnswerList);
 
-  // リストの初期化
-  const initMatchList: string[][] = new Array(6);
-  for (let i = 0; i < 6; i++) {
-    initMatchList[i] = new Array(5).fill("White");
-  }
-
-  // 回答欄のCSSリスト
+  // 回答欄のマッチ状況
   // White: 判定していない
   // Black: 文字も位置も無一致
   // Yellow: 文字のみ一致
   // Green: 文字も位置も一致
+  const initMatchList: string[][] = new Array(6);
+  for (let i = 0; i < 6; i++) {
+    initMatchList[i] = new Array(5).fill("White");
+  }
   const [ matchList, setMatchList ] = useState<string[][]>(initMatchList);
 
   // 回答の判定を行うフラグ
@@ -38,24 +35,15 @@ export const App = (): JSX.Element => {
 
   // 正解単語
   const [correctAnswer, setCorrectAnswer] = useState<string>("");
-  const [todays_no, setTodaysNo] = useState<number>(0);
+  // 今日が何回目のゲームか
+  const [todaysNo, setTodaysNo] = useState<number>(0);
 
-  const getTodaysWord = async () => {
-    const { data } = await axios.post('https://es5eaffo90.execute-api.ap-southeast-2.amazonaws.com/WORDLE', {});
-    if (data.todays_word === undefined) {
-      return;
-    }
-    setCorrectAnswer(data.todays_word);
-    setTodaysNo(data.todays_no);
-    console.log(data);
-  };
-
-  // ラウンド
+  // ラウンド（=現在の行番号+1）
   const [round, setRound] = useState<number>(0);
 
   // 初回レンダリング時にのみ実行
    useEffect(() => {
-    getTodaysWord();
+    getTodaysWord(setCorrectAnswer, setTodaysNo);
     setRound(round + 1);
   }, []);
 
@@ -73,34 +61,6 @@ export const App = (): JSX.Element => {
     );
   }, [judge]);
 
- 
-  const convertAnswerMatchToEmojis = (matchList: string[][]): string => {
-    const emojiList = matchList.map((row) => {
-      return row.map((match) => {
-        if (match === "Black") {
-          return "⬛";
-        } else if (match === "Yellow") {
-          return "🟨";
-        } else if (match === "Green") {
-          return "🟩";
-        } else {
-          return "";
-        }
-      }).join(""); // 各行の絵文字を結合
-    }).filter(row => row.length > 0); // 空の行を除外
-    return emojiList.join("\n"); // 空でない行のみを改行で結合
-    
-  }
-
-  const makeResultText = () => {
-      const hashtag = "#MyWordleProject_" + todays_no;
-      const emojis = convertAnswerMatchToEmojis(matchList);
-      const notes = "*An unofficial Wordle learning project.";
-      const url = "https://kakutory.com/game_pages/MyWordleProject"
-      
-      return hashtag + "\n" + emojis + "\n\n" + notes + "\n" + url;
-  }
-
   return (
     <div className="App" style={appStyle}>
       <Answer
@@ -113,7 +73,7 @@ export const App = (): JSX.Element => {
         setJudge={setJudge} 
       />
       <ShareResultButton 
-        resultText={makeResultText()}
+        resultText={makeGameResultText(matchList, todaysNo)}
       />
       <Notes />
     </div>
