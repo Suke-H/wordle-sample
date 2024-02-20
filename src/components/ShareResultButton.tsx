@@ -2,10 +2,24 @@ import React, { useState } from 'react';
 import Button from "@mui/material/Button";
 import Snackbar from '@mui/material/Snackbar';
 import type { SnackbarCloseReason } from '@mui/material/Snackbar';
+import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 
 type Props = {
     resultText: string;
   };
+
+const shareStyle: React.CSSProperties = {
+    marginBottom: "40px",
+    marginTop: "100px",
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "center",
+    alignItems: "center",
+
+    color: "rgb(88, 88, 88)",
+
+    fontFamily:  ["Inter", "system-ui", "Avenir", "Helvetica", "Arial", "sans-serif"].join(','),
+};
 
 export const ShareResultButton = (props: Props): JSX.Element => {
     const [openSnackbar, setOpenSnackbar] = useState(false);
@@ -28,29 +42,32 @@ export const ShareResultButton = (props: Props): JSX.Element => {
     };
 
     return (
-        <>
+        <div style={shareStyle}>
             <Button
-            variant="contained"
-            onClick={handleCopyText}
-            sx={{
-            marginTop: { xs: "40px", md: "40px" },
-            backgroundColor: "#585858",
-            "&:hover": {
+                variant="contained"
+                onClick={handleCopyText}
+                sx={{
+                textTransform: "none",
                 backgroundColor: "#585858",
-            },
-            }}
-        >
-            Result
-        </Button>
+                padding: "10px 30px",
+                fontSize: "20px",
+                "&:hover": {
+                    backgroundColor: "#585858",
+                },
+                }}
+                startIcon={<ContentCopyIcon />} // アイコンをボタンの前に追加
+            >
+                Share
+            </Button>
 
         <Snackbar
             open={openSnackbar}
-            autoHideDuration={2000} // 6秒後に自動的に閉じる
+            autoHideDuration={2000} 
             onClose={handleCloseSnackbar}
-            message="Copied!" // 表示するメッセージ
-            anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }} // 表示位置
+            message="Copied!" 
+            anchorOrigin={{ vertical: 'top', horizontal: 'center' }} 
         />
-        </>
+        </div>
     )
 
 }

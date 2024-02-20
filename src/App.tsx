@@ -83,7 +83,7 @@ export const App = (): JSX.Element => {
       const notes = "*An unofficial Wordle learning project.";
       const url = "https://kakutory.com/game_pages/MyWordleProject"
       
-      return hashtag + "\n" + emojis + "\n\n" + notes + "\n\n" + url;
+      return hashtag + "\n" + emojis + "\n\n" + notes + "\n" + url;
   }
 
   return (
