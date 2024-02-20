@@ -6,6 +6,8 @@ import { Keyboard } from "./components/keyboard";
 import { Notes } from "./components/notes";
 import { ShareResultButton } from "./components/ShareResultButton";
 
+import { pushedEnterProcess } from "./game_logics/pushedEnterProcess";
+
 export const App = (): JSX.Element => {
   // 6*5の配列の初期化
   const initAnswerList: string[][] = new Array(6);
@@ -51,117 +53,27 @@ export const App = (): JSX.Element => {
   // ラウンド
   const [round, setRound] = useState<number>(0);
 
-  // 単語の妥当性判定
-  const wordValidityJudgement = async () => {
-    const { data } = await axios.post('https://yan5p8s0dg.execute-api.ap-southeast-2.amazonaws.com/WORDLE', 
-      {"word": answerList[round - 1].join("")},);
-    console.log(data);
-    if (data.isValid === undefined) {
-      return false;
-    }
-
-    return data.isValid;
-  }
-
-  // 単語一致判定
-  const wordMatchJudgement = (): string[][] => {
-    // 一度ディープコピーする
-    const tmpMatchList = Array.from(matchList);
-
-    // 1文字ずつ判定
-    for (let i = 0; i < 5; i++) {
-      // 文字が一致
-      if (correctAnswer.indexOf(answerList[round - 1][i]) !== -1) {
-        // 位置も一致(Green)
-        if (answerList[round - 1][i] === correctAnswer[i]) {
-          tmpMatchList[round - 1][i] = "Green";
-        }
-
-        // 文字だけ一致(Yellow)
-        else {
-          tmpMatchList[round - 1][i] = "Yellow";
-        }
-      }
-
-      // 文字も位置も一致していない(Black)
-      else {
-        tmpMatchList[round - 1][i] = "Black";
-      }
-    }
-    return tmpMatchList;
-  };
-
-  // クリア判定
-  const clearJudgement = () => {
-    // 正解が空文字だった場合はサーバーエラー
-    if (correctAnswer === ""){
-        alert("Server Error: Please reload the page.");
-        return;
-    }
-
-    // ワードを抽出
-    const wordList = [];
-    for (let j = 0; j < 5; j++) {
-      wordList.push(answerList[round - 1][j]);
-    }
-    const submitWord = wordList.join("");
-
-    if (submitWord == correctAnswer) {
-      alert("clear!!");
-    } else if (round == 6) {
-      alert(correctAnswer);
-    }
-
-  };
-
-  // Appコンポーネントのjudgeが変化した時に呼ばれる
-  useEffect(() => {
-
-    const checkProcess = async () => {
-
-      // Enterを押したら
-      if (judge === true) {
-
-        // 単語の妥当性判定
-        const isValid = await wordValidityJudgement();
-        if (!isValid)
-        {
-          alert("データセットに存在しない単語です");
-          return;
-        }
-
-        // 一度フラグをおろす
-        setJudge(false);
-      }
-
-      // フラグをおろしてからここへ
-      else {
-        // コンポーネント初期化時にここを通る
-        if (round == 0) {
-          setRound(round + 1); // ラウンドを1に
-          return;
-        }
-          // 単語一致判定
-          const tmpMatchList = wordMatchJudgement();
-          // クリア判定
-          clearJudgement();
-          // スタイル更新
-          // setMatchStyleList(tmpMatchStyleList);
-          setMatchList(tmpMatchList);
-          // ラウンド更新
-          setRound(round + 1);
-      }
-    }
-
-    checkProcess();
-
-  }, [judge]);
-
   // 初回レンダリング時にのみ実行
-  useEffect(() => {
-      getTodaysWord();
+   useEffect(() => {
+    getTodaysWord();
+    setRound(round + 1);
   }, []);
 
+  // Enterを押した際
+  useEffect(() => {
+    pushedEnterProcess(
+      judge, 
+      setJudge,
+      correctAnswer,
+      answerList,
+      matchList,
+      round,
+      setRound,
+      setMatchList
+    );
+  }, [judge]);
+
+ 
   const convertAnswerMatchToEmojis = (matchList: string[][]): string => {
     const emojiList = matchList.map((row) => {
       return row.map((match) => {

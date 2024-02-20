@@ -10,7 +10,7 @@ type Props = {
 
 const shareStyle: React.CSSProperties = {
     marginBottom: "40px",
-    marginTop: "100px",
+    marginTop: "40px",
     display: "flex",
     flexDirection: "column",
     justifyContent: "center",
