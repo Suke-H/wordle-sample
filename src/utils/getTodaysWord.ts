@@ -6,9 +6,8 @@ export const getTodaysWord = async (
     ) => {
     const { data } = await axios.post('https://es5eaffo90.execute-api.ap-southeast-2.amazonaws.com/WORDLE', {});
     if (data.todays_word === undefined) {
-      return;
+		return;
     }
     setCorrectAnswer(data.todays_word);
     setTodaysNo(data.todays_no);
-    console.log(data);
   };
