@@ -11,14 +11,51 @@ import { makeGameResultText } from "./utils/makeGameResultText";
 
 export const App = (): JSX.Element => {
 	// （リスト初期化）
-	const initAnswerList: string[][] = new Array(6);
-	for (let i = 0; i < 6; i++) {
-		initAnswerList[i] = new Array(5).fill("");
+	const initAnswerList: string[][] = new Array(3);
+	for (let i = 0; i < 3; i++) {
+		initAnswerList[i] = new Array(7).fill("");
 	}
-	const initMatchList: string[][] = new Array(6);
-	for (let i = 0; i < 6; i++) {
-		initMatchList[i] = new Array(5).fill("White");
+	// MY
+	initAnswerList[0][0] = "M";
+	initAnswerList[0][1] = "Y";
+	// WORDLE
+	initAnswerList[1][0] = "W";
+	initAnswerList[1][1] = "O";
+	initAnswerList[1][2] = "R";
+	initAnswerList[1][3] = "D";
+	initAnswerList[1][4] = "L";
+	initAnswerList[1][5] = "E";
+	// PROJECT
+	initAnswerList[2][0] = "P";
+	initAnswerList[2][1] = "R";
+	initAnswerList[2][2] = "O";
+	initAnswerList[2][3] = "J";
+	initAnswerList[2][4] = "E";
+	initAnswerList[2][5] = "C";
+	initAnswerList[2][6] = "T";
+	
+	const initMatchList: string[][] = new Array(3);
+	for (let i = 0; i < 3; i++) {
+		initMatchList[i] = new Array(7).fill("White");
 	}
+	// MY
+	initMatchList[0][0] = "Yellow";
+	initMatchList[0][1] = "Yellow";
+	// WORDLE
+	initMatchList[1][0] = "Green";
+	initMatchList[1][1] = "Green";
+	initMatchList[1][2] = "Green";
+	initMatchList[1][3] = "Green";
+	initMatchList[1][4] = "Green";
+	initMatchList[1][5] = "Green";
+	// PROJECT
+	initMatchList[2][0] = "Black";
+	initMatchList[2][1] = "Black";
+	initMatchList[2][2] = "Black";
+	initMatchList[2][3] = "Black";
+	initMatchList[2][4] = "Black";
+	initMatchList[2][5] = "Black";
+	initMatchList[2][6] = "Black";
 
 	/* State */
 	const [answerList, setAnswerList] = useState<string[][]>(initAnswerList); // 回答欄の文字列
