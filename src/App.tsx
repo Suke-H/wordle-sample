@@ -34,12 +34,6 @@ export const App = (): JSX.Element => {
   // キーボードのEnter入力により更新
   const [judge, setJudge] = useState<boolean>(false);
 
-  // 現在の状態
-  // playing: ゲーム中
-  // success: 成功
-  // fail: 失敗
-  const [gameStatus, setGameStatus] = useState<string>("playing");
-
   // 正解単語
   const [correctAnswer, setCorrectAnswer] = useState<string>("");
   const [todays_no, setTodaysNo] = useState<number>(0);
@@ -53,6 +47,115 @@ export const App = (): JSX.Element => {
     setTodaysNo(data.todays_no);
     console.log(data);
   };
+
+  // ラウンド
+  const [round, setRound] = useState<number>(0);
+
+  // 単語の妥当性判定
+  const wordValidityJudgement = async () => {
+    const { data } = await axios.post('https://yan5p8s0dg.execute-api.ap-southeast-2.amazonaws.com/WORDLE', 
+      {"word": answerList[round - 1].join("")},);
+    console.log(data);
+    if (data.isValid === undefined) {
+      return false;
+    }
+
+    return data.isValid;
+  }
+
+  // 単語一致判定
+  const wordMatchJudgement = (): string[][] => {
+    // 一度ディープコピーする
+    const tmpMatchList = Array.from(matchList);
+
+    // 1文字ずつ判定
+    for (let i = 0; i < 5; i++) {
+      // 文字が一致
+      if (correctAnswer.indexOf(answerList[round - 1][i]) !== -1) {
+        // 位置も一致(Green)
+        if (answerList[round - 1][i] === correctAnswer[i]) {
+          tmpMatchList[round - 1][i] = "Green";
+        }
+
+        // 文字だけ一致(Yellow)
+        else {
+          tmpMatchList[round - 1][i] = "Yellow";
+        }
+      }
+
+      // 文字も位置も一致していない(Black)
+      else {
+        tmpMatchList[round - 1][i] = "Black";
+      }
+    }
+    return tmpMatchList;
+  };
+
+  // クリア判定
+  const clearJudgement = () => {
+    // 正解が空文字だった場合はサーバーエラー
+    if (correctAnswer === ""){
+        alert("Server Error: Please reload the page.");
+        return;
+    }
+
+    // ワードを抽出
+    const wordList = [];
+    for (let j = 0; j < 5; j++) {
+      wordList.push(answerList[round - 1][j]);
+    }
+    const submitWord = wordList.join("");
+
+    if (submitWord == correctAnswer) {
+      alert("clear!!");
+    } else if (round == 6) {
+      alert(correctAnswer);
+    }
+
+  };
+
+  // Appコンポーネントのjudgeが変化した時に呼ばれる
+  useEffect(() => {
+
+    const checkProcess = async () => {
+
+      // Enterを押したら
+      if (judge === true) {
+
+        // 単語の妥当性判定
+        const isValid = await wordValidityJudgement();
+        if (!isValid)
+        {
+          alert("データセットに存在しない単語です");
+          return;
+        }
+
+        // 一度フラグをおろす
+        setJudge(false);
+      }
+
+      // フラグをおろしてからここへ
+      else {
+        // コンポーネント初期化時にここを通る
+        if (round == 0) {
+          setRound(round + 1); // ラウンドを1に
+          return;
+        }
+          // 単語一致判定
+          const tmpMatchList = wordMatchJudgement();
+          // クリア判定
+          clearJudgement();
+          // スタイル更新
+          // setMatchStyleList(tmpMatchStyleList);
+          setMatchList(tmpMatchList);
+          // ラウンド更新
+          setRound(round + 1);
+      }
+    }
+
+    checkProcess();
+
+  }, [judge]);
 
   // 初回レンダリング時にのみ実行
   useEffect(() => {
@@ -91,12 +194,6 @@ export const App = (): JSX.Element => {
       <Answer
         answerList={answerList}
         matchList={matchList}
-        setMatchList={setMatchList}
-        judge={judge}
-        setJudge={setJudge}
-        correctAnswer={correctAnswer}
-        gameStatus={gameStatus}
-        setGameStatus={setGameStatus}
       />
       <Keyboard 
         answerList={answerList} 
