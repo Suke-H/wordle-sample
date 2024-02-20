@@ -44,7 +44,7 @@ export const Notes = () => {
 
 		<ul>
 			<li>
-			New York Times社の
+			このサイトは、New York Times社の
 			<a href="https://www.nytimes.com/games/wordle/index.html">WORDLE</a>
 			をもとに作成した勉強用サイトです
 			</li>
