@@ -45,7 +45,7 @@ export const ShareResultButton = (props: Props): JSX.Element => {
     };
 
       // スナックバーを閉じる関数
-    const handleCloseSnackbar = (event: Event | React.SyntheticEvent<unknown, Event>, reason: SnackbarCloseReason) => {
+    const handleCloseSnackbar = (_event: Event | React.SyntheticEvent<unknown, Event>, reason: SnackbarCloseReason) => {
         if (reason === 'clickaway') {
         return; // クリックアウェイ時はスナックバーを閉じない
         }
