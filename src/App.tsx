@@ -5,6 +5,8 @@ import { Keyboard } from "./components/keyboard";
 import { Notes } from "./components/notes";
 import { ShareResultButton } from "./components/ShareResultButton";
 
+import { AlphabetMatch } from "./interfaces/AlphabetMatch";
+
 import { pushedEnterProcess } from "./game_logics/pushedEnterProcess";
 import { getTodaysWord } from "./utils/getTodaysWord";
 import { makeGameResultText } from "./utils/makeGameResultText";
@@ -19,6 +21,17 @@ export const App = (): JSX.Element => {
 	for (let i = 0; i < 6; i++) {
 		initMatchList[i] = new Array(5).fill("White");
 	}
+	// 全アルファベットを'NoUse'で初期化する関数
+	const initializeAlphabetMatch = (): AlphabetMatch => {
+		const result: AlphabetMatch = {};
+		for (let charCode = 65; charCode <= 90; charCode++) {
+		const letter = String.fromCharCode(charCode);
+		result[letter] = 'NoUse';
+		}
+		return result;
+	};
+	// アルファベットの判定リストを初期化
+	const initAlphabetMatch = initializeAlphabetMatch();
 
 	/* State */
 	const [answerList, setAnswerList] = useState<string[][]>(initAnswerList); // 回答欄の文字列
@@ -28,6 +41,7 @@ export const App = (): JSX.Element => {
 	const [todaysNo, setTodaysNo] = useState<number>(0); // 今日が何回目か
 	const [round, setRound] = useState<number>(0); // ラウンド(現在の行番号+1)
 	const [columncnt, setColumncnt] = useState(0); // 現在の列番号
+	const [alphabetMatch, setAlphabetMatch] = useState<AlphabetMatch>(initAlphabetMatch); // アルファベットの判定リスト
 
 	// 初回レンダリング時
 	useEffect(() => {
@@ -40,7 +54,7 @@ export const App = (): JSX.Element => {
 	useEffect(() => {
 		if (!judge) return;
 
-		pushedEnterProcess(correctAnswer, answerList, matchList,round,setMatchList)
+		pushedEnterProcess(correctAnswer, answerList, matchList, round, setMatchList, setAlphabetMatch)
 			.then((isValid) => {
 			/* 単語が妥当でない場合 */
                 if (!isValid) {
@@ -80,6 +94,7 @@ export const App = (): JSX.Element => {
 			answerList={answerList} 
 			setAnswerList={setAnswerList} 
 			setJudge={setJudge} 
+			alphabetMatch={alphabetMatch}
 		/>
 		<ShareResultButton 
 			resultText={makeGameResultText(matchList, todaysNo)}

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-// import axios from "axios";
+import { AlphabetMatch } from "../interfaces/AlphabetMatch";
 
 type appProps = {
 	round: number;
@@ -9,6 +9,7 @@ type appProps = {
 	answerList: string[][];
 	setAnswerList: React.Dispatch<React.SetStateAction<string[][]>>;
 	setJudge: React.Dispatch<React.SetStateAction<boolean>>;
+	alphabetMatch: AlphabetMatch;
 };
 
 type Props = {
@@ -20,8 +21,11 @@ type Props = {
 	setAnswerList: React.Dispatch<React.SetStateAction<string[][]>>;
 	keyLayout: string[];
 	setJudge: React.Dispatch<React.SetStateAction<boolean>>;
+	alphabetMatch: AlphabetMatch;
 };
 
+
+// アルファベットの判定リストを表す型をAlphabetMatchに変更
 const KeyboardRow = (props: Props) => {
 	const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 	const updateDimensions = () => {
@@ -91,7 +95,7 @@ const KeyboardRow = (props: Props) => {
 
 	// ボタンのCSSスタイル
 	const buttonStyle: React.CSSProperties = {
-		backgroundColor: "rgb(217, 217, 217)",
+		backgroundColor: "d9d9d9",
 		borderRadius: "4px",
 		border: "none",
 		width: windowWidth < 600 ? "30px" : "45px",
@@ -103,10 +107,36 @@ const KeyboardRow = (props: Props) => {
 
 	// EnterとDeleteのCSSスタイル
 	// buttonStyleとの差分のみ記述
-		const enterAndDeleteButtonStyle: React.CSSProperties = {
+	const enterAndDeleteButtonStyle: React.CSSProperties = {
+		...buttonStyle,
+		width: windowWidth < 600 ? "50px" : "70px",
+	};
+
+	// AlphabetMatchの結果に基づくスタイル
+	const matchStyles: Record<string, React.CSSProperties> = {
+		NoUse: {}, // NoUseはデフォルトスタイルを使用
+		Green: { backgroundColor: "538d4e" },
+		Yellow: { backgroundColor: "b59f3b" },
+		Black: { backgroundColor: "3a3a3c"},
+	};
+  
+	// スタイルを決定する関数
+	const getButtonStyle = (key: string, matchResult: Record<string, string>) => {
+		// EnterとDelete用のスタイル
+		if (key === "Enter" || key === "Delete") {
+		return {
 			...buttonStyle,
-			width: windowWidth < 600 ? "50px" : "70px",
+			...enterAndDeleteButtonStyle,
+			...matchStyles[matchResult[key]], // matchResultからスタイルを適用
 		};
+		}
+	
+		// 通常キー用のスタイル
+		return {
+		...buttonStyle,
+		...matchStyles[matchResult[key]], // matchResultからスタイルを適用
+		};
+	};
 
 	return (
 		// mapによりキーボードtable作成
@@ -117,7 +147,7 @@ const KeyboardRow = (props: Props) => {
 				<td id="alphabet-key" key={i}>
 				{/* EnterとDeleteのときのみstyleを変更 */}
 				<button value={key} onClick={handleClick} 
-							style={key == "Enter" || key == "Delete" ? enterAndDeleteButtonStyle : buttonStyle}>
+							style={getButtonStyle(key, props.alphabetMatch)}>
 					{key}
 				</button>
 				</td>
@@ -164,6 +194,8 @@ const KeyboardRow = (props: Props) => {
 		"Delete",
 	];
 
+
+
 	return (
 		<div className="Keyboard">
 		<KeyboardRow
@@ -175,6 +207,7 @@ const KeyboardRow = (props: Props) => {
 			setAnswerList={props.setAnswerList}
 			keyLayout={upKeyLayout}
 			setJudge={props.setJudge}
+			alphabetMatch={props.alphabetMatch}
 		/>
 		<KeyboardRow
 			round={props.round}
@@ -185,6 +218,7 @@ const KeyboardRow = (props: Props) => {
 			setAnswerList={props.setAnswerList}
 			keyLayout={middleKeyLayout}
 			setJudge={props.setJudge}
+			alphabetMatch={props.alphabetMatch}
 		/>
 		<KeyboardRow
 			round={props.round}
@@ -195,6 +229,7 @@ const KeyboardRow = (props: Props) => {
 			setAnswerList={props.setAnswerList}
 			keyLayout={downKeyLayout}
 			setJudge={props.setJudge}
+			alphabetMatch={props.alphabetMatch}
 		/>
 		</div>
 	);
