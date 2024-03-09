@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-// import axios from "axios";
 
 type appProps = {
 	round: number;
@@ -20,7 +19,16 @@ type Props = {
 	setAnswerList: React.Dispatch<React.SetStateAction<string[][]>>;
 	keyLayout: string[];
 	setJudge: React.Dispatch<React.SetStateAction<boolean>>;
+	alphabetMatch: AlphabetMatch;
 };
+
+// アルファベットの判定を表す型を定義
+type LetterJudgement = 'Green' | 'Yellow' | 'Black' | 'NoUse';
+
+// アルファベットの判定リストを表す型をAlphabetMatchに変更
+interface AlphabetMatch {
+  [key: string]: LetterJudgement;
+}
 
 const KeyboardRow = (props: Props) => {
 	const [windowWidth, setWindowWidth] = useState(window.innerWidth);
@@ -91,7 +99,7 @@ const KeyboardRow = (props: Props) => {
 
 	// ボタンのCSSスタイル
 	const buttonStyle: React.CSSProperties = {
-		backgroundColor: "rgb(217, 217, 217)",
+		backgroundColor: "d9d9d9",
 		borderRadius: "4px",
 		border: "none",
 		width: windowWidth < 600 ? "30px" : "45px",
@@ -103,10 +111,36 @@ const KeyboardRow = (props: Props) => {
 
 	// EnterとDeleteのCSSスタイル
 	// buttonStyleとの差分のみ記述
-		const enterAndDeleteButtonStyle: React.CSSProperties = {
+	const enterAndDeleteButtonStyle: React.CSSProperties = {
+		...buttonStyle,
+		width: windowWidth < 600 ? "50px" : "70px",
+	};
+
+	// AlphabetMatchの結果に基づくスタイル
+	const matchStyles: Record<string, React.CSSProperties> = {
+		NoUse: {}, // NoUseはデフォルトスタイルを使用
+		Green: { backgroundColor: "538d4e" },
+		Yellow: { backgroundColor: "b59f3b" },
+		Black: { backgroundColor: "3a3a3c"},
+	};
+  
+	// スタイルを決定する関数
+	const getButtonStyle = (key: string, matchResult: Record<string, string>) => {
+		// EnterとDelete用のスタイル
+		if (key === "Enter" || key === "Delete") {
+		return {
 			...buttonStyle,
-			width: windowWidth < 600 ? "50px" : "70px",
+			...enterAndDeleteButtonStyle,
+			...matchStyles[matchResult[key]], // matchResultからスタイルを適用
 		};
+		}
+	
+		// 通常キー用のスタイル
+		return {
+		...buttonStyle,
+		...matchStyles[matchResult[key]], // matchResultからスタイルを適用
+		};
+	};
 
 	return (
 		// mapによりキーボードtable作成
@@ -117,7 +151,7 @@ const KeyboardRow = (props: Props) => {
 				<td id="alphabet-key" key={i}>
 				{/* EnterとDeleteのときのみstyleを変更 */}
 				<button value={key} onClick={handleClick} 
-							style={key == "Enter" || key == "Delete" ? enterAndDeleteButtonStyle : buttonStyle}>
+							style={getButtonStyle(key, props.alphabetMatch)}>
 					{key}
 				</button>
 				</td>
@@ -164,6 +198,19 @@ const KeyboardRow = (props: Props) => {
 		"Delete",
 	];
 
+	// 全アルファベットを'NoUse'で初期化する関数
+	const initializeAlphabetMatch = (): AlphabetMatch => {
+		const result: AlphabetMatch = {};
+		for (let charCode = 65; charCode <= 90; charCode++) {
+		const letter = String.fromCharCode(charCode);
+		result[letter] = 'NoUse';
+		}
+		return result;
+	};
+	
+	// アルファベットの判定リストを初期化
+	const alphabetMatch = initializeAlphabetMatch();
+
 	return (
 		<div className="Keyboard">
 		<KeyboardRow
@@ -175,6 +222,7 @@ const KeyboardRow = (props: Props) => {
 			setAnswerList={props.setAnswerList}
 			keyLayout={upKeyLayout}
 			setJudge={props.setJudge}
+			alphabetMatch={alphabetMatch}
 		/>
 		<KeyboardRow
 			round={props.round}
@@ -185,6 +233,7 @@ const KeyboardRow = (props: Props) => {
 			setAnswerList={props.setAnswerList}
 			keyLayout={middleKeyLayout}
 			setJudge={props.setJudge}
+			alphabetMatch={alphabetMatch}
 		/>
 		<KeyboardRow
 			round={props.round}
@@ -195,6 +244,7 @@ const KeyboardRow = (props: Props) => {
 			setAnswerList={props.setAnswerList}
 			keyLayout={downKeyLayout}
 			setJudge={props.setJudge}
+			alphabetMatch={alphabetMatch}
 		/>
 		</div>
 	);
