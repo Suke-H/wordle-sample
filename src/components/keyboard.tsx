@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { AlphabetMatch } from "../interfaces/AlphabetMatch";
 
 type appProps = {
 	round: number;
@@ -8,6 +9,7 @@ type appProps = {
 	answerList: string[][];
 	setAnswerList: React.Dispatch<React.SetStateAction<string[][]>>;
 	setJudge: React.Dispatch<React.SetStateAction<boolean>>;
+	alphabetMatch: AlphabetMatch;
 };
 
 type Props = {
@@ -22,14 +24,8 @@ type Props = {
 	alphabetMatch: AlphabetMatch;
 };
 
-// アルファベットの判定を表す型を定義
-type LetterJudgement = 'Green' | 'Yellow' | 'Black' | 'NoUse';
 
 // アルファベットの判定リストを表す型をAlphabetMatchに変更
-interface AlphabetMatch {
-  [key: string]: LetterJudgement;
-}
-
 const KeyboardRow = (props: Props) => {
 	const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 	const updateDimensions = () => {
@@ -198,18 +194,7 @@ const KeyboardRow = (props: Props) => {
 		"Delete",
 	];
 
-	// 全アルファベットを'NoUse'で初期化する関数
-	const initializeAlphabetMatch = (): AlphabetMatch => {
-		const result: AlphabetMatch = {};
-		for (let charCode = 65; charCode <= 90; charCode++) {
-		const letter = String.fromCharCode(charCode);
-		result[letter] = 'NoUse';
-		}
-		return result;
-	};
-	
-	// アルファベットの判定リストを初期化
-	const alphabetMatch = initializeAlphabetMatch();
+
 
 	return (
 		<div className="Keyboard">
@@ -222,7 +207,7 @@ const KeyboardRow = (props: Props) => {
 			setAnswerList={props.setAnswerList}
 			keyLayout={upKeyLayout}
 			setJudge={props.setJudge}
-			alphabetMatch={alphabetMatch}
+			alphabetMatch={props.alphabetMatch}
 		/>
 		<KeyboardRow
 			round={props.round}
@@ -233,7 +218,7 @@ const KeyboardRow = (props: Props) => {
 			setAnswerList={props.setAnswerList}
 			keyLayout={middleKeyLayout}
 			setJudge={props.setJudge}
-			alphabetMatch={alphabetMatch}
+			alphabetMatch={props.alphabetMatch}
 		/>
 		<KeyboardRow
 			round={props.round}
@@ -244,7 +229,7 @@ const KeyboardRow = (props: Props) => {
 			setAnswerList={props.setAnswerList}
 			keyLayout={downKeyLayout}
 			setJudge={props.setJudge}
-			alphabetMatch={alphabetMatch}
+			alphabetMatch={props.alphabetMatch}
 		/>
 		</div>
 	);
