@@ -35,7 +35,7 @@ export const pushedEnterProcess = async (
 
   // アルファベットの判定リスト更新
   const newMatch: AlphabetMatch = {};
-  for (let i = 0; i < correctAnswer.length; i++) {
+  for (let i = 0; i < 5; i++) {
     newMatch[answerList[round - 1][i]] = tmpMatchList[round - 1][i] as
       | "Green"
       | "Yellow"

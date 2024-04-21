@@ -12,6 +12,8 @@ import { pushedEnterProcess } from "./game_logics/pushedEnterProcess";
 import { getTodaysWord } from "./utils/getTodaysWord";
 import { makeGameResultText } from "./utils/makeGameResultText";
 
+import { saveGameData, loadGameData, LoadDataSetters } from "./load/saveAndLoad";
+
 export const App = (): JSX.Element => {
   // （リスト初期化）
   const initAnswerList: string[][] = new Array(6);
@@ -35,27 +37,45 @@ export const App = (): JSX.Element => {
   const initAlphabetMatch = initializeAlphabetMatch();
 
   /* State */
-  // セーブが必要なState
+
+  // APIから取得するデータ
   const [todaysNo, setTodaysNo] = useState<number>(0); // 本日のお題番号
+  const [correctAnswer, setCorrectAnswer] = useState<string>(""); // 今日の単語
+
+  // セーブが必要なState
   const [answerList, setAnswerList] = useState<string[][]>(initAnswerList); // 回答欄の文字列
 
   // 上記を元にロードするState
   const [matchList, setMatchList] = useState<string[][]>(initMatchList); // 回答欄のマッチ状況(White/Black/Yellow/Grren)
   const [gameState, setGameState] = useState<GameState>("Playing"); // ゲームの状態(Playing/GameClear/GameOver)
-  const [correctAnswer, setCorrectAnswer] = useState<string>(""); // 今日の単語
   const [round, setRound] = useState<number>(0); // ラウンド(現在の行番号+1)
-  const [columncnt, setColumncnt] = useState(0); // 現在の列番号
   const [alphabetMatch, setAlphabetMatch] =
     useState<AlphabetMatch>(initAlphabetMatch); // アルファベットの判定リスト
 
   // セーブ/ロードが不要なState
   const [judge, setJudge] = useState<boolean>(false); // Enterを押したか
+  const [columncnt, setColumncnt] = useState(0); // 現在の列番号
 
   // 初回レンダリング時
   useEffect(() => {
     // 今日の単語を取得
     getTodaysWord(setCorrectAnswer, setTodaysNo);
-    setRound(round + 1); // ラウンドを1にセット
+    console.log("todaysNo", todaysNo);
+
+    // setRound(round + 1); // ラウンドを1にセット
+    // ロード処理
+    const loadDataSetters: LoadDataSetters = {
+      setAnswerList: setAnswerList,
+      setMatchList: setMatchList,
+      setGameState: setGameState,
+      setRound: setRound,
+      setAlphabetMatch: setAlphabetMatch,
+    }
+    loadGameData(todaysNo, correctAnswer, loadDataSetters);
+
+    console.table(answerList);
+    console.table(matchList);
+
   }, []);
 
   // Enterを押した際
@@ -88,6 +108,9 @@ export const App = (): JSX.Element => {
       /* 問題ない場合 */
         setRound(round + 1); // 次の行へ移行
         setColumncnt(0); // 列番号を0にリセット
+
+        // セーブ処理
+        saveGameData(todaysNo, answerList);
       }
     });
 
