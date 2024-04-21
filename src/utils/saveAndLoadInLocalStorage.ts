@@ -4,8 +4,6 @@ export const saveGameDataInLocal = (todaysNo: number, answerList: string[][]) =>
         answerList: answerList
     };
 
-    console.log("save!!", gameData);
-
     localStorage.setItem('gameData', JSON.stringify(gameData));
   }
 
@@ -18,13 +16,11 @@ export const saveGameDataInLocal = (todaysNo: number, answerList: string[][]) =>
 
         // 本日のお題番号が一致している場合
         if (data.todaysNo === todaysNo.toString()) {
-            console.log("load!!", data);
             return data.answerList;
         }
     }
 
     // ローカルストレージにデータがない場合 | 本日のお題番号が一致していない場合
-    console.log("load failed...");
     const initAnswerList: string[][] = new Array(6);
     for (let i = 0; i < 6; i++) {
       initAnswerList[i] = new Array(5).fill("");
@@ -33,7 +29,6 @@ export const saveGameDataInLocal = (todaysNo: number, answerList: string[][]) =>
   }
 
     export const resetGameDataInLocal = () => {
-        console.log("reset!!");
         localStorage.removeItem('gameData');
     }
   

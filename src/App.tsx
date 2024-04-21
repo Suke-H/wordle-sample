@@ -14,6 +14,9 @@ import { makeGameResultText } from "./utils/makeGameResultText";
 
 import { saveGameData, loadGameData, LoadDataSetters } from "./load/saveAndLoad";
 
+// debug
+// import { resetGameDataInLocal } from "./utils/saveAndLoadInLocalStorage";
+
 export const App = (): JSX.Element => {
   // （リスト初期化）
   const initAnswerList: string[][] = new Array(6);
@@ -55,6 +58,7 @@ export const App = (): JSX.Element => {
   // セーブ/ロードが不要なState
   const [judge, setJudge] = useState<boolean>(false); // Enterを押したか
   const [columncnt, setColumncnt] = useState(0); // 現在の列番号
+  const [isLoadFinished, setIsLoadFinished] = useState<boolean>(false); // ロードが完了したか
 
   // 初回レンダリング時
   useEffect(() => {
@@ -68,8 +72,9 @@ export const App = (): JSX.Element => {
   useEffect(() => {
     // todaysNoが更新されたときに実行する処理
     if (todaysNo === 0) return; // 初期値の場合は処理をスキップ
-  
-    console.log("todaysNo updated", todaysNo); // 更新された値でログ出力
+
+    // debug
+    // resetGameDataInLocal();
   
     const loadDataSetters: LoadDataSetters = {
       setAnswerList: setAnswerList,
@@ -81,6 +86,8 @@ export const App = (): JSX.Element => {
   
     // todaysNo と correctAnswer が更新されていることを前提にロード処理を呼び出し
     loadGameData(todaysNo, correctAnswer, loadDataSetters);
+    // ロード完了
+    setIsLoadFinished(true);
   
   }, [todaysNo]); // todaysNoが変更されたときに実行される
 
@@ -136,6 +143,7 @@ export const App = (): JSX.Element => {
         setJudge={setJudge}
         alphabetMatch={alphabetMatch}
         gameState={gameState}
+        isLoadFinished={isLoadFinished}
       />
       <ShareResultButton resultText={makeGameResultText(matchList, todaysNo)} />
       <Notes />

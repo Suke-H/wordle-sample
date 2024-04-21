@@ -12,6 +12,7 @@ type appProps = {
   setJudge: React.Dispatch<React.SetStateAction<boolean>>;
   alphabetMatch: AlphabetMatch;
   gameState: GameState;
+  isLoadFinished: boolean;
 };
 
 type Props = {
@@ -25,6 +26,7 @@ type Props = {
   setJudge: React.Dispatch<React.SetStateAction<boolean>>;
   alphabetMatch: AlphabetMatch;
   gameState: GameState;
+  isLoadFinished: boolean;
 };
 
 // アルファベットの判定リストを表す型をAlphabetMatchに変更
@@ -57,6 +59,9 @@ const KeyboardRow = (props: Props) => {
 
     // ゲームが終了している場合は何もしない
     if (props.gameState !== "Playing") return;
+
+    // ロードが完了していない場合は何もしない
+    if (!props.isLoadFinished) return;
 
     // Enter入力
     if (letter == "Enter") {
@@ -215,6 +220,7 @@ export const Keyboard = (props: appProps) => {
         setJudge={props.setJudge}
         alphabetMatch={props.alphabetMatch}
         gameState={props.gameState}
+        isLoadFinished={props.isLoadFinished}
       />
       <KeyboardRow
         round={props.round}
@@ -227,6 +233,7 @@ export const Keyboard = (props: appProps) => {
         setJudge={props.setJudge}
         alphabetMatch={props.alphabetMatch}
         gameState={props.gameState}
+        isLoadFinished={props.isLoadFinished}
       />
       <KeyboardRow
         round={props.round}
@@ -239,6 +246,7 @@ export const Keyboard = (props: appProps) => {
         setJudge={props.setJudge}
         alphabetMatch={props.alphabetMatch}
         gameState={props.gameState}
+        isLoadFinished={props.isLoadFinished}
       />
     </div>
   );
