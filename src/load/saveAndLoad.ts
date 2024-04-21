@@ -33,8 +33,8 @@ export const loadGameData = (todaysNo: number, correctAnswer: string, loadDataSe
 
     loadDataSetters.setRound(round+1);
 
-    // ラウンドが1だった場合
-    if (round === 1) {
+    // ラウンドが0だった場合
+    if (round === 0) {
         // ローカルストレージをクリアして終了
         resetGameData();
         return;
