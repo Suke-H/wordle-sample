@@ -56,6 +56,9 @@ const KeyboardRow = (props: Props) => {
 	) => {
 		const letter = event.currentTarget.value;
 
+		// ゲームが終了している場合は何もしない
+		if (props.gameState !== "Playing") return;
+
 		// Enter入力
 		if (letter == "Enter") {
 			// 文字数不足
