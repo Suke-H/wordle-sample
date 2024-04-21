@@ -58,25 +58,31 @@ export const App = (): JSX.Element => {
 
   // 初回レンダリング時
   useEffect(() => {
-    // 今日の単語を取得
-    getTodaysWord(setCorrectAnswer, setTodaysNo);
-    console.log("todaysNo", todaysNo);
-
-    // setRound(round + 1); // ラウンドを1にセット
-    // ロード処理
+    const fetchData = async () => {
+      await getTodaysWord(setCorrectAnswer, setTodaysNo);
+    };
+  
+    fetchData();
+  }, []); // コンポーネントがマウントされたときに一度だけ実行される
+  
+  useEffect(() => {
+    // todaysNoが更新されたときに実行する処理
+    if (todaysNo === 0) return; // 初期値の場合は処理をスキップ
+  
+    console.log("todaysNo updated", todaysNo); // 更新された値でログ出力
+  
     const loadDataSetters: LoadDataSetters = {
       setAnswerList: setAnswerList,
       setMatchList: setMatchList,
       setGameState: setGameState,
       setRound: setRound,
       setAlphabetMatch: setAlphabetMatch,
-    }
+    };
+  
+    // todaysNo と correctAnswer が更新されていることを前提にロード処理を呼び出し
     loadGameData(todaysNo, correctAnswer, loadDataSetters);
-
-    console.table(answerList);
-    console.table(matchList);
-
-  }, []);
+  
+  }, [todaysNo]); // todaysNoが変更されたときに実行される
 
   // Enterを押した際
   useEffect(() => {

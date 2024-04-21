@@ -25,7 +25,10 @@ export const saveGameDataInLocal = (todaysNo: number, answerList: string[][]) =>
 
     // ローカルストレージにデータがない場合 | 本日のお題番号が一致していない場合
     console.log("load failed...");
-    const initAnswerList = new Array(6).fill(new Array(5).fill(""));
+    const initAnswerList: string[][] = new Array(6);
+    for (let i = 0; i < 6; i++) {
+      initAnswerList[i] = new Array(5).fill("");
+    }
     return initAnswerList;
   }
 

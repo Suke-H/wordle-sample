@@ -19,17 +19,19 @@ export const saveGameData = (todaysNo: number, answerList: string[][]) => {
 export const loadGameData = (todaysNo: number, correctAnswer: string, loadDataSetters: LoadDataSetters) => {
     // ローカルストレージからロード
     const answerList = loadGameDataInLocal(todaysNo);
+    // console.table(answerList);
 
     // ロードしたデータをセット
     loadDataSetters.setAnswerList(answerList);
 
     // ラウンド数をセット
     // answerListの中で空文字列がある場合はその行番号をセット
-    const index = answerList.findIndex((row) => row.includes("")) + 1;
-    // 空文字列がない(indexが0)場合は6をセット
-    const round = index !== 0 ? index : 6;
+    const index = answerList.findIndex((row) => row.includes(""));
+    // 空文字列がない(indexが-1)場合は5をセット
+    const round = index !== -1 ? index : 5;
+    // console.log("round", round, "index", index);
 
-    loadDataSetters.setRound(round);
+    loadDataSetters.setRound(round+1);
 
     // ラウンドが1だった場合
     if (round === 1) {
