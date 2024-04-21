@@ -26,8 +26,8 @@ export const loadGameData = (todaysNo: number, correctAnswer: string, loadDataSe
     // ラウンド数をセット
     // answerListの中で空文字列がある場合はその行番号をセット
     const index = answerList.findIndex((row) => row.includes(""));
-    // 空文字列がない(indexが-1)場合は5をセット
-    const round = index !== -1 ? index : 5;
+    // 空文字列がない(indexが-1)場合は6をセット
+    const round = index !== -1 ? index : 6;
 
     loadDataSetters.setRound(round+1);
 
@@ -39,14 +39,14 @@ export const loadGameData = (todaysNo: number, correctAnswer: string, loadDataSe
     }
 
     // ゲームの状態をセット
-    loadDataSetters.setGameState(checkClear(correctAnswer, answerList, round+1));
+    loadDataSetters.setGameState(checkClear(correctAnswer, answerList, round));
 
     // マッチリストをセット
-    const matchList = calcMatchList(answerList, correctAnswer, round+1)
+    const matchList = calcMatchList(answerList, correctAnswer, round)
     loadDataSetters.setMatchList(matchList);
 
     // 使用したアルファベットをセット
-    loadDataSetters.setAlphabetMatch(calcAlphabetMatch(answerList, matchList, round+1));
+    loadDataSetters.setAlphabetMatch(calcAlphabetMatch(answerList, matchList, round));
 }
 
 const resetGameData = () => {
