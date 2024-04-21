@@ -19,7 +19,6 @@ export const saveGameData = (todaysNo: number, answerList: string[][]) => {
 export const loadGameData = (todaysNo: number, correctAnswer: string, loadDataSetters: LoadDataSetters) => {
     // ローカルストレージからロード
     const answerList = loadGameDataInLocal(todaysNo);
-    // console.table(answerList);
 
     // ロードしたデータをセット
     loadDataSetters.setAnswerList(answerList);
@@ -29,7 +28,6 @@ export const loadGameData = (todaysNo: number, correctAnswer: string, loadDataSe
     const index = answerList.findIndex((row) => row.includes(""));
     // 空文字列がない(indexが-1)場合は5をセット
     const round = index !== -1 ? index : 5;
-    // console.log("round", round, "index", index);
 
     loadDataSetters.setRound(round+1);
 
@@ -41,14 +39,14 @@ export const loadGameData = (todaysNo: number, correctAnswer: string, loadDataSe
     }
 
     // ゲームの状態をセット
-    loadDataSetters.setGameState(checkClear(correctAnswer, answerList, round));
+    loadDataSetters.setGameState(checkClear(correctAnswer, answerList, round+1));
 
     // マッチリストをセット
-    const matchList = calcMatchList(answerList, correctAnswer, round)
+    const matchList = calcMatchList(answerList, correctAnswer, round+1)
     loadDataSetters.setMatchList(matchList);
 
     // 使用したアルファベットをセット
-    loadDataSetters.setAlphabetMatch(calcAlphabetMatch(answerList, matchList, round));
+    loadDataSetters.setAlphabetMatch(calcAlphabetMatch(answerList, matchList, round+1));
 }
 
 const resetGameData = () => {
