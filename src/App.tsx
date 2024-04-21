@@ -6,6 +6,7 @@ import { Notes } from "./components/notes";
 import { ShareResultButton } from "./components/ShareResultButton";
 
 import { AlphabetMatch } from "./interfaces/AlphabetMatch";
+import { GameState } from "./interfaces/GameState";
 
 import { pushedEnterProcess } from "./game_logics/pushedEnterProcess";
 import { getTodaysWord } from "./utils/getTodaysWord";
@@ -35,7 +36,9 @@ export const App = (): JSX.Element => {
 
 	/* State */
 	const [answerList, setAnswerList] = useState<string[][]>(initAnswerList); // 回答欄の文字列
-	const [ matchList, setMatchList ] = useState<string[][]>(initMatchList); // 回答欄のマッチ状況(White/Black/Yellow/Grren)
+	const [matchList, setMatchList] = useState<string[][]>(initMatchList); // 回答欄のマッチ状況(White/Black/Yellow/Grren)
+	// クリア判定のための変数
+	const [gameState, setGameState] = useState<GameState>("Playing"); // ゲームの状態(Playing/GameClear/GameOver)
 	const [judge, setJudge] = useState<boolean>(false); // Enterを押したか
 	const [correctAnswer, setCorrectAnswer] = useState<string>(""); // 今日の単語
 	const [todaysNo, setTodaysNo] = useState<number>(0); // 今日が何回目か
@@ -53,8 +56,10 @@ export const App = (): JSX.Element => {
 	// Enterを押した際
 	useEffect(() => {
 		if (!judge) return;
+		if (gameState !== "Playing") return;
 
-		pushedEnterProcess(correctAnswer, answerList, matchList, round, setMatchList, setAlphabetMatch)
+		pushedEnterProcess(correctAnswer, answerList, matchList, round, 
+			setMatchList, setAlphabetMatch, setGameState)
 			.then((isValid) => {
 			/* 単語が妥当でない場合 */
                 if (!isValid) {
@@ -95,6 +100,7 @@ export const App = (): JSX.Element => {
 			setAnswerList={setAnswerList} 
 			setJudge={setJudge} 
 			alphabetMatch={alphabetMatch}
+			gameState={gameState}
 		/>
 		<ShareResultButton 
 			resultText={makeGameResultText(matchList, todaysNo)}

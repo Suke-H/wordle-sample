@@ -1,3 +1,5 @@
+import { GameState } from "../interfaces/GameState";
+
 import { checkWordValidity } from "./checkWordValidity";
 import { checkWordMatch } from "./checkWordMatch";
 import { checkClear } from "./checkClear";
@@ -10,7 +12,8 @@ export const pushedEnterProcess = async (
 		matchList: string[][],
 		round: number,
 		setMatchList: React.Dispatch<React.SetStateAction<string[][]>>,
-		setAlphabetMatch: React.Dispatch<React.SetStateAction<AlphabetMatch>>
+		setAlphabetMatch: React.Dispatch<React.SetStateAction<AlphabetMatch>>,
+		setGameState: React.Dispatch<React.SetStateAction<GameState>>
 	) : Promise<boolean> => {
 
 	// 単語の妥当性判定
@@ -20,7 +23,9 @@ export const pushedEnterProcess = async (
 	// 単語一致判定
 	const tmpMatchList = checkWordMatch(correctAnswer, answerList, matchList, round);
 	// クリア判定
-	checkClear(correctAnswer, answerList, round);
+	const _gameState = checkClear(correctAnswer, answerList, round);
+	setGameState(_gameState);
+
 	// スタイル更新
 	setMatchList(tmpMatchList);
 

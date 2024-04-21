@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { AlphabetMatch } from "../interfaces/AlphabetMatch";
+import { GameState } from "../interfaces/GameState";
 
 type appProps = {
 	round: number;
@@ -10,6 +11,7 @@ type appProps = {
 	setAnswerList: React.Dispatch<React.SetStateAction<string[][]>>;
 	setJudge: React.Dispatch<React.SetStateAction<boolean>>;
 	alphabetMatch: AlphabetMatch;
+	gameState: GameState;
 };
 
 type Props = {
@@ -22,6 +24,7 @@ type Props = {
 	keyLayout: string[];
 	setJudge: React.Dispatch<React.SetStateAction<boolean>>;
 	alphabetMatch: AlphabetMatch;
+	gameState: GameState;
 };
 
 
@@ -194,8 +197,6 @@ const KeyboardRow = (props: Props) => {
 		"Delete",
 	];
 
-
-
 	return (
 		<div className="Keyboard">
 		<KeyboardRow
@@ -208,6 +209,7 @@ const KeyboardRow = (props: Props) => {
 			keyLayout={upKeyLayout}
 			setJudge={props.setJudge}
 			alphabetMatch={props.alphabetMatch}
+			gameState={props.gameState}
 		/>
 		<KeyboardRow
 			round={props.round}
@@ -219,6 +221,7 @@ const KeyboardRow = (props: Props) => {
 			keyLayout={middleKeyLayout}
 			setJudge={props.setJudge}
 			alphabetMatch={props.alphabetMatch}
+			gameState={props.gameState}
 		/>
 		<KeyboardRow
 			round={props.round}
@@ -230,6 +233,7 @@ const KeyboardRow = (props: Props) => {
 			keyLayout={downKeyLayout}
 			setJudge={props.setJudge}
 			alphabetMatch={props.alphabetMatch}
+			gameState={props.gameState}
 		/>
 		</div>
 	);
