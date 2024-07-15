@@ -1,5 +1,5 @@
 export const makeGameResultText = (matchList: string[][], todaysNo: number) => {
-	const hashtag = "#MyWordleProject_" + todaysNo;
+	const hashtag = "#MyWordleProject No." + todaysNo;
 	const emojis = convertAnswerMatchToEmojis(matchList);
 	const notes = "*An unofficial Wordle learning project.";
 	const url = "https://kakutory.com/game_pages/MyWordleProject";
